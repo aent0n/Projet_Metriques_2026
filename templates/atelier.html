@@ -6,118 +6,83 @@
     <title>Atelier - métrologie</title>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
-        :root {
-            --primary: #2563eb;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
+            background-color: #fdfdfd;
+            color: #222;
+            font-family: Georgia, serif;
             margin: 0;
             padding: 0;
-            line-height: 1.5;
         }
 
         nav {
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border);
-            padding: 0.75rem;
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            background: #fff;
         }
 
         nav a {
+            margin: 0 1rem;
             text-decoration: none;
-            color: var(--text-main);
-            font-weight: 500;
-            font-size: 0.9375rem;
-            transition: color 0.2s;
-        }
-
-        nav a:hover {
-            color: var(--primary);
+            color: #444;
+            font-size: 0.9rem;
+            text-transform: lowercase;
         }
 
         .container {
             max-width: 600px;
             margin: 3rem auto;
             padding: 3rem;
-            background: var(--card-bg);
-            border-radius: 0.75rem;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 {
-            color: var(--text-main);
-            margin: 0 0 2rem;
-            font-size: 1.5rem;
+            border: 1px solid #eee;
             text-align: center;
         }
 
-        #chart {
+        h1 {
+            font-weight: normal;
+            font-size: 1.5rem;
             margin-bottom: 2rem;
         }
 
+        #chart {
+            display: inline-block;
+        }
+
         .info {
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 1.125rem;
+            margin-top: 2rem;
+            font-style: italic;
+            color: #666;
         }
     </style>
 </head>
 
 <body>
     <nav>
-        <a href="/">Accueil</a>
-        <a href="/rapport">Rapport</a>
-        <a href="/histogramme">Histogramme</a>
-        <a href="/atelier">Atelier</a>
-        <a href="/contact">Contact</a>
+        <a href="/">accueil</a>
+        <a href="/rapport">rapport</a>
+        <a href="/histogramme">histogramme</a>
+        <a href="/atelier">atelier</a>
+        <a href="/contact">contact</a>
     </nav>
     <div class="container">
         <h1>Vitesse du vent à Marseille</h1>
         <div id="chart"></div>
-        <div class="info" id="value">Récupération des données...</div>
+        <div class="info" id="value">Analyse en cours...</div>
     </div>
-
     <script>
         google.charts.load('current', { packages: ['gauge'] });
         google.charts.setOnLoadCallback(init);
-
         async function init() {
             try {
                 const res = await fetch('/marseille/vent');
                 const json = await res.json();
                 const speed = json.wind_speed;
-
-                const data = google.visualization.arrayToDataTable([
-                    ['Label', 'Value'],
-                    ['km/h', speed]
-                ]);
-
-                const options = {
-                    width: 300, height: 240,
-                    redFrom: 60, redTo: 100,
-                    yellowFrom: 30, yellowTo: 60,
-                    minorTicks: 5
-                };
-
+                const data = google.visualization.arrayToDataTable([['Label', 'Value'], ['km/h', speed]]);
+                const options = { width: 300, height: 240, minorTicks: 5 };
                 const chart = new google.visualization.Gauge(document.getElementById('chart'));
                 chart.draw(data, options);
-                document.getElementById('value').textContent = `Vitesse actuelle : ${speed} km/h`;
-            } catch (err) {
-                document.getElementById('value').textContent = "Erreur de chargement";
-            }
+                document.getElementById('value').textContent = `Vent mesuré : ${speed} km/h`;
+            } catch (err) { document.getElementById('value').textContent = "Erreur de connexion"; }
         }
     </script>
 </body>
