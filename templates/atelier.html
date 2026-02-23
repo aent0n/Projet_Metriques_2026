@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Vitesse du Vent — Marseille</title>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e3f2fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #0288d1;
+            margin-bottom: 30px;
+        }
+
+        #chart {
+            display: inline-block;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Vent à Marseille 🌬️</h1>
+        <div id="chart"></div>
+        <div class="info" id="value">Récupération...</div>
+    </div>
+
+    <script>
+        google.charts.load('current', { packages: ['gauge'] });
+        google.charts.setOnLoadCallback(init);
+
+        async function init() {
+            const res = await fetch('/marseille/vent');
+            const json = await res.json();
+            const speed = json.wind_speed;
+
+            const data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['km/h', speed]
+            ]);
+
+            const options = {
+                width: 400, height: 240,
+                redFrom: 60, redTo: 100,
+                yellowFrom: 30, yellowTo: 60,
+                minorTicks: 5
+            };
+
+            const chart = new google.visualization.Gauge(document.getElementById('chart'));
+            chart.draw(data, options);
+            document.getElementById('value').textContent = `Vitesse actuelle : ${speed} km/h`;
+        }
+    </script>
+</body>
+
+</html>
